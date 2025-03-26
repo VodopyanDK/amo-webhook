@@ -121,11 +121,19 @@ def process_leads():
 process_leads()
 
 
+from flask import Flask
 import time
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Webhook сервис работает!", 200
 
 while True:
     print("🔄 Запускаем процесс...")
     process_leads()
     print("⏳ Ожидание 3 минуты...")
-    time.sleep(60)  # Ждём 3 минуты
+    time.sleep(60)
+
 
