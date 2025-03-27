@@ -30,10 +30,12 @@ DEXSCREENER_API_URL = "https://api.dexscreener.com/latest/dex/tokens/"
 def get_dexscreener_data(token_address):
     """Получаем данные о токене с DexScreener API."""
     url = f"{DEXSCREENER_API_URL}{token_address}"
+    print(f"Запрос к DexScreener: {url}")
     response = requests.get(url)
     
     if response.status_code == 200:
         data = response.json()
+        print(f"Ответ от DexScreener: {data}")
         if "pairs" in data and data["pairs"]:
             pair = max(data["pairs"], key=lambda x: x["liquidity"].get("usd", 0))
             timestamp = pair["pairCreatedAt"] / 1000
@@ -52,6 +54,10 @@ def get_dexscreener_data(token_address):
                 "telegram": telegram_link,
                 "twitter": twitter_link
             }
+        else:
+            print("Нет данных в ключе 'pairs' или он пуст")
+    else:
+        print(f"Ошибка при запросе к DexScreener: {response.status_code}")
     return None
 
 def get_leads_with_token_field():
@@ -59,10 +65,13 @@ def get_leads_with_token_field():
     url = f"{AMOCRM_DOMAIN}/api/v4/leads"
     headers = {"Authorization": f"Bearer {AMOCRM_ACCESS_TOKEN}"}
     params = {"filter[statuses]": NEW_LEAD_STAGE_ID, "with": "custom_fields_values"}
+    print(f"Запрос к amoCRM: {url} с параметрами {params}")
     response = requests.get(url, headers=headers, params=params)
     
     if response.status_code == 200:
-        leads = response.json().get("_embedded", {}).get("leads", [])
+        data = response.json()
+        leads = data.get("_embedded", {}).get("leads", [])
+        print(f"Найдено сделок: {len(leads)}")
         filtered_leads = []
         
         for lead in leads:
@@ -77,7 +86,10 @@ def get_leads_with_token_field():
             
             if token_address:
                 filtered_leads.append({"id": lead["id"], "token": token_address, "existing_fields": existing_fields})
+        print(f"Сделок с токеном: {len(filtered_leads)}")
         return filtered_leads
+    else:
+        print(f"Ошибка запроса к amoCRM: {response.status_code}")
     return []
 
 def update_lead(lead_id, update_data):
@@ -87,8 +99,9 @@ def update_lead(lead_id, update_data):
         "Authorization": f"Bearer {AMOCRM_ACCESS_TOKEN}",
         "Content-Type": "application/json"
     }
+    print(f"Обновление сделки {lead_id} с данными: {update_data}")
     response = requests.patch(url, headers=headers, data=json.dumps(update_data))
-    print(f"Обновление сделки {lead_id}: {response.status_code}", response.text)
+    print(f"Ответ обновления сделки {lead_id}: {response.status_code} - {response.text}")
     return response.status_code == 200
 
 def process_leads():
@@ -120,11 +133,10 @@ def process_leads():
 
 @app.route('/webhook', methods=['POST'], strict_slashes=False)
 def webhook():
-    # Здесь можно добавить проверку секретного ключа, если требуется
+    print("Получен POST-запрос на /webhook")
     process_leads()
     return jsonify({"status": "ok"})
 
-# Дополнительный тестовый маршрут для проверки работы сервиса
 @app.route('/', methods=['GET'])
 def index():
     return "Сервис работает!"
