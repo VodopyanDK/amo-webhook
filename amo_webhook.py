@@ -35,17 +35,13 @@ DEXSCREENER_API_URL = "https://api.dexscreener.com/latest/dex/tokens/"
 def get_dexscreener_data(token_address):
     """Получаем данные о токене с DexScreener API."""
     url = f"{DEXSCREENER_API_URL}{token_address}"
-    logger.info("Запрос к DexScreener: %s", url)
-    response = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; MyScript/1.0)"
+    }
+    response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
-        try:
-            data = response.json()
-            logger.info("Ответ от DexScreener: %s", data)
-        except Exception as e:
-            logger.error("Ошибка обработки JSON от DexScreener: %s", e)
-            return None
-        
+        data = response.json()
         if "pairs" in data and data["pairs"]:
             pair = max(data["pairs"], key=lambda x: x["liquidity"].get("usd", 0))
             timestamp = pair["pairCreatedAt"] / 1000
@@ -64,10 +60,6 @@ def get_dexscreener_data(token_address):
                 "telegram": telegram_link,
                 "twitter": twitter_link
             }
-        else:
-            logger.info("Нет данных в ключе 'pairs' или он пуст.")
-    else:
-        logger.error("Ошибка при запросе к DexScreener: %d", response.status_code)
     return None
 
 def get_leads_with_token_field():
