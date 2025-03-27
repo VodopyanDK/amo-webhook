@@ -65,11 +65,16 @@ def get_leads_with_token_field():
     url = f"{AMOCRM_DOMAIN}/api/v4/leads"
     headers = {"Authorization": f"Bearer {AMOCRM_ACCESS_TOKEN}"}
     params = {"filter[statuses]": NEW_LEAD_STAGE_ID, "with": "custom_fields_values"}
-    print(f"Запрос к amoCRM: {url} с параметрами {params}")
     response = requests.get(url, headers=headers, params=params)
     
-    if response.status_code == 200:
+    # Вывод полного ответа для отладки
+    try:
         data = response.json()
+        print("Ответ от amoCRM:", data)
+    except Exception as e:
+        print("Ошибка при обработке JSON ответа:", e)
+    
+    if response.status_code == 200:
         leads = data.get("_embedded", {}).get("leads", [])
         print(f"Найдено сделок: {len(leads)}")
         filtered_leads = []
@@ -91,6 +96,7 @@ def get_leads_with_token_field():
     else:
         print(f"Ошибка запроса к amoCRM: {response.status_code}")
     return []
+
 
 def update_lead(lead_id, update_data):
     """Обновляем сделку в AmoCRM."""
