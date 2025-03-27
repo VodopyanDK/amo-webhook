@@ -36,10 +36,14 @@ def get_dexscreener_data(token_address):
     """Получаем данные о токене с DexScreener API."""
     url = f"{DEXSCREENER_API_URL}{token_address}"
     headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; MyScript/1.0)"
+         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+         "Accept": "application/json",
+         "Referer": "https://dexscreener.com/",
+         "Origin": "https://dexscreener.com"
     }
     response = requests.get(url, headers=headers)
-    
+    # Выводим статус-код для отладки
+    print("Status code:", response.status_code)
     if response.status_code == 200:
         data = response.json()
         if "pairs" in data and data["pairs"]:
@@ -60,7 +64,10 @@ def get_dexscreener_data(token_address):
                 "telegram": telegram_link,
                 "twitter": twitter_link
             }
+    else:
+        print("Ошибка при запросе к DexScreener:", response.status_code)
     return None
+
 
 def get_leads_with_token_field():
     """Получаем сделки на этапе 'NEW Lead', где заполнено поле TOKEN_FIELD_ID."""
