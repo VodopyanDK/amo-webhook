@@ -149,7 +149,7 @@ def process_leads():
         else:
             logging.info(f"❌ Не удалось получить данные о токене {lead['token']}")
 
-@app.route('/', methods=['POST'])
+@app.route('/run', methods=['POST'])
 def amocrm_webhook():
     """
     Обработчик вебхука от amoCRM. При получении POST-запроса (form-urlencoded)
