@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 import os
 
-# 🔹 Создаём Flask-приложение
+# Создаём Flask-приложение
 app = Flask(__name__)
 
 @app.route("/")
@@ -17,8 +17,8 @@ def run_script():
     process_leads()
     return {"status": "success", "message": "Процесс запущен"}, 200
 
-# 🔹 AmoCRM данные
-AMOCRM_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImYxNTYyOTVlZmYzYjI4ZjlmMjE4YTYxZmRjMjliMDMzNmZiOTJmZjJmOWNjNWQxYzI0MDNiMzRlYTI3YzVjZjRlMWUyZjBhOTgwM2VmZjM5In0.eyJhdWQiOiJkMTM3YTAzYi1lMTczLTRkMWYtOTQxMi0xMjExZDE0YmI1MWQiLCJqdGkiOiJmMTU2Mjk1ZWZmM2IyOGY5ZjIxOGE2MWZkYzI5YjAzMzZmYjkyZmYyZjljYzVkMWMyNDAzYjM0ZWEyN2M1Y2Y0ZTFlMmYwYTk4MDNlZmYzOSIsImlhdCI6MTc0MjM4NzU3NiwibmJmIjoxNzQyMzg3NTc2LCJleHAiOjE5MDAxMDg4MDAsInN1YiI6IjEyMjYwMzA2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMyMjk4NTEwLCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiNjkxMjU4NzMtNzA4Zi00ODU5LWFkMTktNzYwZTFmMDdhOGNkIiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.Ff9ZBKREBg1iV-GnkoubiY_BS66jJSUFpuTVqNo620SrS6jO8dDZtXe5drm3u0EYKGp97xDhGtV-HajW1QCpT3veI7V6kWW_2I_CPA-NCsSpP59K1m0E5-9thBWxiDSUVicL9s0Os-67eEqdDHWrlkNZac-qZKUj6Un4almFfCD2jYSIZhqF4dWUVziEzTRHoK8jyJfPdjqaevp4k3nhpg3EyyEtVmD-Eb67GfSmYysQvlIos1_S_pLKEWf_6HfxNB1kO4jKXcfsLzXFcVT50zMNvTlqT7_wqCD2_2fIXXqlKbGMQq7NOC_m712HQtFdrPQr5alsHNeQ9nyRpFAdJA"  # Убери токен перед публикацией!
+# AmoCRM данные
+AMOCRM_ACCESS_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImYxNTYyOTVlZmYzYjI4ZjlmMjE4YTYxZmRjMjliMDMzNmZiOTJmZjJmOWNjNWQxYzI0MDNiMzRlYTI3YzVjZjRlMWUyZjBhOTgwM2VmZjM5In0.eyJhdWQiOiJkMTM3YTAzYi1lMTczLTRkMWYtOTQxMi0xMjExZDE0YmI1MWQiLCJqdGkiOiJmMTU2Mjk1ZWZmM2IyOGY5ZjIxOGE2MWZkYzI5YjAzMzZmYjkyZmYyZjljYzVkMWMyNDAzYjM0ZWEyN2M1Y2Y0ZTFlMmYwYTk4MDNlZmYzOSIsImlhdCI6MTc0MjM4NzU3NiwibmJmIjoxNzQyMzg3NTc2LCJleHAiOjE5MDAxMDg4MDAsInN1YiI6IjEyMjYwMzA2IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMyMjk4NTEwLCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiNjkxMjU4NzMtNzA4Zi00ODU5LWFkMTktNzYwZTFmMDdhOGNkIiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.Ff9ZBKREBg1iV-GnkoubiY_BS66jJSUFpuTVqNo620SrS6jO8dDZtXe5drm3u0EYKGp97xDhGtV-HajW1QCpT3veI7V6kWW_2I_CPA-NCsSpP59K1m0E5-9thBWxiDSUVicL9s0Os-67eEqdDHWrlkNZac-qZKUj6Un4almFfCD2jYSIZhqF4dWUVziEzTRHoK8jyJfPdjqaevp4k3nhpg3EyyEtVmD-Eb67GfSmYysQvlIos1_S_pLKEWf_6HfxNB1kO4jKXcfsLzXFcVT50zMNvTlqT7_wqCD2_2fIXXqlKbGMQq7NOC_m712HQtFdrPQr5alsHNeQ9nyRpFAdJA"  # Уберите токен перед публикацией!
 AMOCRM_DOMAIN = "https://arbitrajy.amocrm.ru"
 TOKEN_FIELD_ID = 898037  
 NEW_LEAD_STAGE_ID = 75086270  
@@ -64,15 +64,24 @@ def get_leads_with_token_field():
     params = {"filter[statuses]": NEW_LEAD_STAGE_ID, "with": "custom_fields_values"}
     response = requests.get(url, headers=headers, params=params)
     
-    # Добавляем вывод для отладки
+    # Выводим ответ от AmoCRM для отладки
     print("Ответ AmoCRM:", response.json())
     
     if response.status_code == 200:
         leads = response.json().get("_embedded", {}).get("leads", [])
-        return [
-            {"id": lead["id"], "token": lead["custom_fields_values"][0]["values"][0]["value"]}
-            for lead in leads if lead.get("custom_fields_values")
-        ]
+        result = []
+        for lead in leads:
+            custom_fields = lead.get("custom_fields_values", [])
+            token = None
+            # Ищем поле с нужным TOKEN_FIELD_ID (898037)
+            for field in custom_fields:
+                if field.get("field_id") == TOKEN_FIELD_ID:
+                    if field.get("values"):
+                        token = field["values"][0].get("value")
+                    break
+            if token:
+                result.append({"id": lead["id"], "token": token})
+        return result
     return []
 
 def update_lead(lead_id, update_data):
@@ -87,10 +96,12 @@ def process_leads():
     if not leads:
         print("❌ Сделки на этапе 'NEW Lead' с токенами не найдены.")
         return
+
     for lead in leads:
         print(f"✅ Обрабатываем сделку {lead['id']} с токеном {lead['token']}")
         token_data = get_dexscreener_data(lead["token"])
         if token_data:
+            print("Данные от Dexscreener:", token_data)
             update_payload = {
                 "custom_fields_values": [
                     {"field_id": FIELDS_MAPPING[key], "values": [{"value": str(value)}]}
@@ -101,8 +112,9 @@ def process_leads():
                 print(f"Сделка {lead['id']} обновлена успешно.")
             else:
                 print(f"Ошибка обновления сделки {lead['id']}.")
+        else:
+            print(f"Не удалось получить данные с Dexscreener для сделки {lead['id']}")
 
-# Запускаем сервер Flask
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
