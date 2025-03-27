@@ -31,8 +31,13 @@ DEXSCREENER_API_URL = "https://api.dexscreener.com/latest/dex/tokens/"
 def get_dexscreener_data(token_address):
     """Получаем данные о токене с DexScreener API."""
     url = f"{DEXSCREENER_API_URL}{token_address}"
-    response = requests.get(url)
-    
+    headers = {"User-Agent": "Mozilla/5.0"}  # добавляем заголовок User-Agent
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+    except Exception as e:
+        print("Ошибка запроса к DexScreener:", e, flush=True)
+        return None
+    print("DexScreener response:", response.status_code, response.text, flush=True)
     if response.status_code == 200:
         data = response.json()
         if "pairs" in data and data["pairs"]:
