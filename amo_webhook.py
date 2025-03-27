@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 import requests
 import json
 from datetime import datetime
+import os
 
 # 🔹 Создаём Flask-приложение
 app = Flask(__name__)
@@ -12,7 +13,7 @@ def home():
 
 @app.route("/run", methods=["POST"])
 def run_script():
-    """Запускаем процесс обновления AmoCRM."""
+    print("Получен запрос:", request.method, request.headers, request.data)
     process_leads()
     return {"status": "success", "message": "Процесс запущен"}, 200
 
@@ -65,6 +66,8 @@ def get_leads_with_token_field():
     
     if response.status_code == 200:
         leads = response.json().get("_embedded", {}).get("leads", [])
+        # Предполагается, что нужное поле находится в первом элементе custom_fields_values.
+        # При необходимости можно фильтровать по TOKEN_FIELD_ID.
         return [
             {"id": lead["id"], "token": lead["custom_fields_values"][0]["values"][0]["value"]}
             for lead in leads if lead.get("custom_fields_values")
@@ -93,10 +96,12 @@ def process_leads():
                     for key, value in token_data.items() if key in FIELDS_MAPPING
                 ]
             }
-            update_lead(lead["id"], update_payload)
+            if update_lead(lead["id"], update_payload):
+                print(f"Сделка {lead['id']} обновлена успешно.")
+            else:
+                print(f"Ошибка обновления сделки {lead['id']}.")
 
 # Запускаем сервер Flask
-import os
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
