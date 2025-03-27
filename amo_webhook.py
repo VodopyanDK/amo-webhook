@@ -83,10 +83,10 @@ def update_lead(lead_id, update_data):
 
 def process_leads():
     leads = get_leads_with_token_field()
+    print("Найдено сделок:", leads)
     if not leads:
         print("❌ Сделки на этапе 'NEW Lead' с токенами не найдены.")
         return
-
     for lead in leads:
         print(f"✅ Обрабатываем сделку {lead['id']} с токеном {lead['token']}")
         token_data = get_dexscreener_data(lead["token"])
