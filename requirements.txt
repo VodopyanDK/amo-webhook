@@ -1,3 +1,4 @@
 Flask
 requests
-
+gspread
+oauth2client
