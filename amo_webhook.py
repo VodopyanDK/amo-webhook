@@ -64,10 +64,11 @@ def get_leads_with_token_field():
     params = {"filter[statuses]": NEW_LEAD_STAGE_ID, "with": "custom_fields_values"}
     response = requests.get(url, headers=headers, params=params)
     
+    # Добавляем вывод для отладки
+    print("Ответ AmoCRM:", response.json())
+    
     if response.status_code == 200:
         leads = response.json().get("_embedded", {}).get("leads", [])
-        # Предполагается, что нужное поле находится в первом элементе custom_fields_values.
-        # При необходимости можно фильтровать по TOKEN_FIELD_ID.
         return [
             {"id": lead["id"], "token": lead["custom_fields_values"][0]["values"][0]["value"]}
             for lead in leads if lead.get("custom_fields_values")
